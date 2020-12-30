@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta charset="UTF-8" />
+    <title>2020振り返り</title>
+    <meta name="viewport" content="width=device-width" />
+
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header><h1>2020年振り返り</h1></header>
+      <article>
+        <section>
+            <h2>着順率</h2>
+          <canvas id="juniChart"></canvas>
+        </section>
+        <section>
+          <div class="chart">
+            <h2>合計スコア</h2>
+            <canvas id="totalScoreChart"></canvas>
+          </div>
+        </section>
+        <section>
+        　<h2>各種分析</h2>
+          <canvas id="rateChart"></canvas>
+        </section>
+        <section>
+        　<h2>立直詳細</h2>
+          <canvas id="reachDetails"></canvas>
+        </section>
+        <section>
+          <h2>平均和了点</h2>
+          <canvas id="aveAgariTenChart"></canvas>
+        </section>
+        <section>
+            <h2>データ詳細</h2>
+            <div id="originDataDetails">
+                <table>
+                    <thead>
+                        <td></td>
+                        <td>石川</td>
+                        <td>松本</td>
+                        <td>福永</td>
+                        <td>座安</td>
+                    </thead>
+                    <tbody>
+                        <template v-for="(value, key, index) in dataLabel">
+                          <tr :key="index">
+                            <td>{{value}}</td>
+                            <td>{{originDataset[0][key]}}</td>
+                            <td>{{originDataset[1][key]}}</td>
+                            <td>{{originDataset[2][key]}}</td>
+                            <td>{{originDataset[3][key]}}</td>
+                          </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+      </article>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <script>
+      let colorConfing = [
+        { backgroundColor: "rgba(0, 0, 0, 0.5)", borderColor: "rgba(0, 0, 0)" },
+        {
+          backgroundColor: "rgba(255, 99, 132, 0.5)",
+          borderColor: "rgba(255, 99, 132)",
+        },
+        {
+          backgroundColor: "rgb(75, 192, 192, 0.5)",
+          borderColor: "rgb(75, 192, 192)",
+        },
+        {
+          backgroundColor: "rgb(54, 162, 235, 0.5)",
+          borderColor: "rgb(54, 162, 235)",
+        },
+        {
+          backgroundColor: "rgb(54, 162, 235, 0.5)",
+          borderColor: "rgb(54, 162, 235)",
+        },
+      ];
+      let originDataset = [
+        {
+          name: "石川",
+          totalHantyan: 73,
+          topRate: 20.55,
+          j2Rate: 30.14,
+          j3Rate: 19.18,
+          j4Rate: 30.14,
+          quinellaRate: 50.68,
+          aveJuni: 2.59,
+          maxTen: 86500,
+          maxScore: 96,
+          totalScore: -184,
+          aveScore: -2.52,
+          totalKyoku: 711,
+          agariCount: 153,
+          agariRate: 21.52,
+          aveAgariTen: 6696.08,
+          hojyuCount: 112,
+          hojyuRate: 15.75,
+          reachCount: 138,
+          reachRate: 19.41,
+          reachSucessCount: 63,
+          reachSucessRate: 45.65,
+          senseiReachCount: 85,
+          senseiReachSucessCount: 42,
+          senseiReachRate: 61.59,
+          senseiReachSucessRate: 49.41,
+          okkakeReachCount: 53,
+          okkakeReachSucsessCount: 21,
+          okkakeReachRate: 38.41,
+          okkakeReachSucessRate: 39.62,
+          furoCount: 222,
+          furoSucsessCount: 76,
+          furoRate: 31.22,
+          furoSucessRate: 34.23,
+        },
+        {
+          name: "松本",
+          totalHantyan: 73,
+          topRate: 24.66,
+          j2Rate: 15.07,
+          j3Rate: 26.03,
+          j4Rate: 34.25,
+          quinellaRate: 39.73,
+          aveJuni: 2.7,
+          maxTen: 62100,
+          maxScore: 71,
+          totalScore: -493,
+          aveScore: -6.75,
+          totalKyoku: 711,
+          agariCount: 150,
+          agariRate: 21.1,
+          aveAgariTen: 6354.67,
+          hojyuCount: 117,
+          hojyuRate: 16.46,
+          reachCount: 229,
+          reachRate: 32.21,
+          reachSucessCount: 98,
+          reachSucessRate: 42.79,
+          senseiReachCount: 174,
+          senseiReachSucessCount: 78,
+          senseiReachRate: 75.98,
+          senseiReachSucessRate: 44.83,
+          okkakeReachCount: 55,
+          okkakeReachSucsessCount: 20,
+          okkakeReachRate: 24.02,
+          okkakeReachSucessRate: 36.36,
+          furoCount: 133,
+          furoSucsessCount: 49,
+          furoRate: 18.71,
+          furoSucessRate: 36.84,
+        },
+        {
+          name: "福永",
+          totalHantyan: 73,
+          topRate: 26.03,
+          j2Rate: 31.51,
+          j3Rate: 26.03,
+          j4Rate: 16.44,
+          quinellaRate: 57.53,
+          aveJuni: 2.33,
+          maxTen: 71300,
+          maxScore: 81,
+          totalScore: 383,
+          aveScore: 5.25,
+          totalKyoku: 711,
+          agariCount: 172,
+          agariRate: 24.19,
+          aveAgariTen: 6696.51,
+          hojyuCount: 106,
+          hojyuRate: 14.91,
+          reachCount: 152,
+          reachRate: 21.38,
+          reachSucessCount: 76,
+          reachSucessRate: 50.0,
+          senseiReachCount: 119,
+          senseiReachSucessCount: 64,
+          senseiReachRate: 78.29,
+          senseiReachSucessRate: 53.78,
+          okkakeReachCount: 33,
+          okkakeReachSucsessCount: 12,
+          okkakeReachRate: 21.71,
+          okkakeReachSucessRate: 36.36,
+          furoCount: 244,
+          furoSucsessCount: 90,
+          furoRate: 34.32,
+          furoSucessRate: 36.89,
+        },
+        {
+          name: "座安",
+          totalHantyan: 73,
+          topRate: 28.77,
+          j2Rate: 23.29,
+          j3Rate: 28.77,
+          j4Rate: 19.18,
+          quinellaRate: 52.05,
+          aveJuni: 2.38,
+          maxTen: 63600,
+          maxScore: 74,
+          totalScore: 294,
+          aveScore: 4.03,
+          totalKyoku: 711,
+          agariCount: 162,
+          agariRate: 22.78,
+          aveAgariTen: 6702.47,
+          hojyuCount: 100,
+          hojyuRate: 14.06,
+          reachCount: 174,
+          reachRate: 24.47,
+          reachSucessCount: 93,
+          reachSucessRate: 53.45,
+          senseiReachCount: 130,
+          senseiReachSucessCount: 80,
+          senseiReachRate: 74.71,
+          senseiReachSucessRate: 61.54,
+          okkakeReachCount: 44,
+          okkakeReachSucsessCount: 13,
+          okkakeReachRate: 25.29,
+          okkakeReachSucessRate: 29.55,
+          furoCount: 192,
+          furoSucsessCount: 64,
+          furoRate: 27.0,
+          furoSucessRate: 33.33,
+        },
+      ];
+      new Chart(document.getElementById("juniChart"), {
+        // The type of chart we want to create
+        type: "bar",
+        // The data for our dataset
+        data: {
+          labels: ["TOP率", "2着率", "3着率", "4着率", "連対率"],
+          datasets: [
+            {
+              label: originDataset[0].name,
+              backgroundColor: colorConfing[0].backgroundColor,
+              borderColor: colorConfing[0].borderColor,
+              borderWidth: 1,
+              data: [
+                originDataset[0].topRate,
+                originDataset[0].j2Rate,
+                originDataset[0].j3Rate,
+                originDataset[0].j4Rate,
+                originDataset[0].quinellaRate,
+              ],
+            },
+            {
+              label: originDataset[1].name,
+              backgroundColor: colorConfing[1].backgroundColor,
+              borderColor: colorConfing[1].borderColor,
+              borderWidth: 1,
+              data: [
+                originDataset[1].topRate,
+                originDataset[1].j2Rate,
+                originDataset[1].j3Rate,
+                originDataset[1].j4Rate,
+                originDataset[1].quinellaRate,
+              ],
+            },
+            {
+              label: originDataset[2].name,
+              backgroundColor: colorConfing[2].backgroundColor,
+              borderColor: colorConfing[2].borderColor,
+              borderWidth: 1,
+              data: [
+                originDataset[2].topRate,
+                originDataset[2].j2Rate,
+                originDataset[2].j3Rate,
+                originDataset[2].j4Rate,
+                originDataset[2].quinellaRate,
+              ],
+            },
+            {
+              label: originDataset[3].name,
+              backgroundColor: colorConfing[3].backgroundColor,
+              borderColor: colorConfing[3].borderColor,
+              borderWidth: 1,
+              data: [
+                originDataset[3].topRate,
+                originDataset[3].j2Rate,
+                originDataset[3].j3Rate,
+                originDataset[3].j4Rate,
+                originDataset[3].quinellaRate,
+              ],
+            },
+          ],
+        },
+
+        // Configuration options go here
+        options: {
+          responsive: true,
+          legend: {
+            position: "top",
+          },
+          title: {
+            display: false,
+            text: "着順率",
+          },
+          scales: { yAxes: [{ ticks: { beginAtZero: true } }] },
+          layout: {
+            padding: 10,
+          },
+        },
+      });
+      new Chart(document.getElementById("totalScoreChart"), {
+        // The type of chart we want to create
+        type: "bar",
+        // The data for our dataset
+        data: {
+          labels: ["トータルスコア"],
+          datasets: [
+            {
+              label: originDataset[0].name,
+              backgroundColor: colorConfing[0].backgroundColor,
+              borderColor: colorConfing[0].borderColor,
+              borderWidth: 1,
+              data: [originDataset[0].totalScore],
+            },
+            {
+              label: originDataset[1].name,
+              backgroundColor: colorConfing[1].backgroundColor,
+              borderColor: colorConfing[1].borderColor,
+              borderWidth: 1,
+              data: [originDataset[1].totalScore],
+            },
+            {
+              label: originDataset[2].name,
+              backgroundColor: colorConfing[2].backgroundColor,
+              borderColor: colorConfing[2].borderColor,
+              borderWidth: 1,
+              data: [originDataset[2].totalScore],
+            },
+            {
+              label: originDataset[3].name,
+              backgroundColor: colorConfing[3].backgroundColor,
+              borderColor: colorConfing[3].borderColor,
+              borderWidth: 1,
+              data: [originDataset[3].totalScore],
+            },
+          ],
+        },
+
+        // Configuration options go here
+        options: {
+          responsive: true,
+          legend: {
+            position: "top",
+          },
+          title: {
+            display: false,
+            text: "トータルスコア",
+          },
+          scales: { yAxes: [{ ticks: { beginAtZero: true } }] },
+          layout: {
+            padding: {
+              left: 210,
+              right: 210,
+              top: 10,
+              bottom: 10,
+            },
+          },
+        },
+      });
+      new Chart(document.getElementById("rateChart"), {
+        // The type of chart we want to create
+        type: "bar",
+        // The data for our dataset
+        data: {
+          labels: [
+            "和了率",
+            "立直率",
+            "立直成功率",
+            "副露率",
+            "副露成功率",
+            "放銃率",
+          ],
+          datasets: [
+            {
+              label: originDataset[0].name,
+              backgroundColor: colorConfing[0].backgroundColor,
+              borderColor: colorConfing[0].borderColor,
+              borderWidth: 1,
+              data: [
+                originDataset[0].agariRate,
+                originDataset[0].reachRate,
+                originDataset[0].reachSucessRate,
+                originDataset[0].furoRate,
+                originDataset[0].furoSucessRate,
+                originDataset[0].hojyuRate,
+              ],
+            },
+            {
+              label: originDataset[1].name,
+              backgroundColor: colorConfing[1].backgroundColor,
+              borderColor: colorConfing[1].borderColor,
+              borderWidth: 1,
+              data: [
+                originDataset[1].agariRate,
+                originDataset[1].reachRate,
+                originDataset[1].reachSucessRate,
+                originDataset[1].furoRate,
+                originDataset[1].furoSucessRate,
+                originDataset[1].hojyuRate,
+              ],
+            },
+            {
+              label: originDataset[2].name,
+              backgroundColor: colorConfing[2].backgroundColor,
+              borderColor: colorConfing[2].borderColor,
+              borderWidth: 1,
+              data: [
+                originDataset[2].agariRate,
+                originDataset[2].reachRate,
+                originDataset[2].reachSucessRate,
+                originDataset[2].furoRate,
+                originDataset[2].furoSucessRate,
+                originDataset[2].hojyuRate,
+              ],
+            },
+            {
+              label: originDataset[3].name,
+              backgroundColor: colorConfing[3].backgroundColor,
+              borderColor: colorConfing[3].borderColor,
+              borderWidth: 1,
+              data: [
+                originDataset[3].agariRate,
+                originDataset[3].reachRate,
+                originDataset[3].reachSucessRate,
+                originDataset[3].furoRate,
+                originDataset[3].furoSucessRate,
+                originDataset[3].hojyuRate,
+              ],
+            },
+          ],
+        },
+
+        // Configuration options go here
+        options: {
+          responsive: true,
+          legend: {
+            position: "top",
+          },
+          title: {
+            display: false,
+            text: "各種データ",
+          },
+          scales: { yAxes: [{ ticks: { beginAtZero: true } }] },
+          layout: {
+            padding: 10,
+          },
+        },
+      });
+      new Chart(document.getElementById("reachDetails"), {
+        // The type of chart we want to create
+        type: "bar",
+        // The data for our dataset
+        data: {
+          labels: [
+            "立直率",
+            "立直成功率",
+            "先制立直率",
+            "先制立直成功率",
+            "追っかけ立直率",
+            "追っかけ立直成功率",
+          ],
+          datasets: [
+            {
+              label: originDataset[0].name,
+              backgroundColor: colorConfing[0].backgroundColor,
+              borderColor: colorConfing[0].borderColor,
+              borderWidth: 1,
+              data: [
+                originDataset[0].reachRate,
+                originDataset[0].reachSucessRate,
+                originDataset[0].senseiReachRate,
+                originDataset[0].senseiReachSucessRate,
+                originDataset[0].okkakeReachRate,
+                originDataset[0].okkakeReachSucessRate,
+              ],
+            },
+            {
+              label: originDataset[1].name,
+              backgroundColor: colorConfing[1].backgroundColor,
+              borderColor: colorConfing[1].borderColor,
+              borderWidth: 1,
+              data: [
+                originDataset[1].reachRate,
+                originDataset[1].reachSucessRate,
+                originDataset[1].senseiReachRate,
+                originDataset[1].senseiReachSucessRate,
+                originDataset[1].okkakeReachRate,
+                originDataset[1].okkakeReachSucessRate,
+              ],
+            },
+            {
+              label: originDataset[2].name,
+              backgroundColor: colorConfing[2].backgroundColor,
+              borderColor: colorConfing[2].borderColor,
+              borderWidth: 1,
+              data: [
+                originDataset[2].reachRate,
+                originDataset[2].reachSucessRate,
+                originDataset[2].senseiReachRate,
+                originDataset[2].senseiReachSucessRate,
+                originDataset[2].okkakeReachRate,
+                originDataset[2].okkakeReachSucessRate,
+              ],
+            },
+            {
+              label: originDataset[3].name,
+              backgroundColor: colorConfing[3].backgroundColor,
+              borderColor: colorConfing[3].borderColor,
+              borderWidth: 1,
+              data: [
+                originDataset[3].reachRate,
+                originDataset[3].reachSucessRate,
+                originDataset[3].senseiReachRate,
+                originDataset[3].senseiReachSucessRate,
+                originDataset[3].okkakeReachRate,
+                originDataset[3].okkakeReachSucessRate,
+              ],
+            },
+          ],
+        },
+
+        // Configuration options go here
+        options: {
+          responsive: true,
+          legend: {
+            position: "top",
+          },
+          title: {
+            display: false,
+            text: "リーチ詳細",
+          },
+          scales: { yAxes: [{ ticks: { beginAtZero: true } }] },
+          layout: {
+            padding: 10,
+          },
+        },
+      });
+      new Chart(document.getElementById("aveAgariTenChart"), {
+        // The type of chart we want to create
+        type: "bar",
+        // The data for our dataset
+        data: {
+          labels: ["平均和了点"],
+          datasets: [
+            {
+              label: originDataset[0].name,
+              backgroundColor: colorConfing[0].backgroundColor,
+              borderColor: colorConfing[0].borderColor,
+              borderWidth: 1,
+              data: [originDataset[0].aveAgariTen],
+            },
+            {
+              label: originDataset[1].name,
+              backgroundColor: colorConfing[1].backgroundColor,
+              borderColor: colorConfing[1].borderColor,
+              borderWidth: 1,
+              data: [originDataset[1].aveAgariTen],
+            },
+            {
+              label: originDataset[2].name,
+              backgroundColor: colorConfing[2].backgroundColor,
+              borderColor: colorConfing[2].borderColor,
+              borderWidth: 1,
+              data: [originDataset[2].aveAgariTen],
+            },
+            {
+              label: originDataset[3].name,
+              backgroundColor: colorConfing[3].backgroundColor,
+              borderColor: colorConfing[3].borderColor,
+              borderWidth: 1,
+              data: [originDataset[3].aveAgariTen],
+            },
+          ],
+        },
+
+        // Configuration options go here
+        options: {
+          responsive: true,
+          legend: {
+            position: "top",
+          },
+          scales: { yAxes: [{ ticks: { min: 6000 } }] },
+          layout: {
+            padding: {
+              left: 210,
+              right: 210,
+              top: 10,
+              bottom: 10,
+            },
+          },
+        },
+      });
+      new Vue({
+        el: "#originDataDetails",
+        data: function () {
+          return {
+            originDataset: originDataset,
+            dataLabel: {
+              totalHantyan: '総半荘数',
+              topRate: 'TOP率',
+              j2Rate: '2着率',
+              j3Rate: '3着率',
+              j4Rate: '4着率',
+              quinellaRate: '連対率',
+              aveJuni: '平均順位',
+              maxTen: '最高点',
+              maxScore: '最高スコア',
+              totalScore: '合計スコア',
+              aveScore: '平均スコア',
+              totalKyoku: '総局数',
+              agariCount: '和了数',
+              agariRate: '和了率',
+              aveAgariTen: '平均和了点',
+              hojyuCount: '放銃数',
+              hojyuRate: '放銃率',
+              reachCount: '立直数',
+              reachRate: '立直率',
+              reachSucessCount: '立直成功数',
+              reachSucessRate: '立直成功率',
+              senseiReachCount: '先制立直数',
+              senseiReachSucessCount: '先制立直成功数',
+              senseiReachRate: '先制立直率',
+              senseiReachSucessRate: '先制立直成功率',
+              okkakeReachCount: '追っかけ立直数',
+              okkakeReachSucsessCount: '追っかけ立直成功数',
+              okkakeReachRate: '追っかけ立直率',
+              okkakeReachSucessRate: '追っかけ立直成功率',
+              furoCount: '副露数',
+              furoSucsessCount: '副露成功数',
+              furoRate: '副露率',
+              furoSucessRate: '副露成功率',
+            },
+          };
+        },
+      });
+    </script>
+  </body>
+</html>
